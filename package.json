@@ -1,0 +1,6 @@
+{
+  "name": "terril-mx-steam-auth",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Connexion Steam pour TERRIL MX (vérification OpenID côté serveur)"
+}
