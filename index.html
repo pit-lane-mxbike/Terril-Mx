@@ -432,6 +432,8 @@
   </div>
 </footer>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 /* ============================================================
    CONFIG — tout ce qui est modifiable est ici, en un seul bloc.
@@ -495,22 +497,38 @@ function copyVal(id){
 }
 
 /* ---------- Connexion Steam ---------- */
-// Le bouton redirige vers votre fonction serverless /api/auth/steam,
-// qui gère elle-même l'aller-retour avec Steam (voir api/auth/steam.js
-// et api/auth/steam/callback.js, à déployer sur Vercel).
 function loginWithSteam(){
   window.location.href = '/api/steam-login';
 }
 
+const firebaseConfig = {
+  apiKey: "AIzaSyBhIh8M3ox2CTR4WjUF2VX06tuul1I9sfQ",
+  authDomain: "pitlanemxbike-30fbc.firebaseapp.com",
+  databaseURL: "https://pitlanemxbike-30fbc-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "pitlanemxbike-30fbc",
+  storageBucket: "pitlanemxbike-30fbc.firebasestorage.app",
+  messagingSenderId: "115592782980",
+  appId: "1:115592782980:web:10af8d46a7bda5ba0c8ed1"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 function saveGuid(){
   const guid = document.getElementById('guid-input').value.trim();
-  if (!guid) return;
+  const steamId = localStorage.getItem('terrilmx_steamid');
+  if (!guid || !steamId) return;
   localStorage.setItem('terrilmx_guid', guid);
-  // TODO: quand Firebase sera branché, remplacer/compléter par une écriture
-  // dans la Realtime Database, comme pour le reste de PITLANE.
-  const saved = document.getElementById('guid-saved');
-  saved.style.display = 'inline';
-  setTimeout(() => saved.style.display = 'none', 2500);
+  db.ref('terrilmx_pilotes/' + steamId).set({
+    steamid: steamId,
+    guid: guid,
+    updatedAt: Date.now()
+  }).then(() => {
+    const saved = document.getElementById('guid-saved');
+    saved.style.display = 'inline';
+    setTimeout(() => saved.style.display = 'none', 2500);
+  }).catch((err) => {
+    alert("Erreur d'enregistrement Firebase : " + err.message);
+  });
 }
 
 function initProfile(){
@@ -528,10 +546,23 @@ function initProfile(){
     document.getElementById('profile-connected').style.display = 'block';
     document.getElementById('steamid-val').textContent = steamId;
 
-    const savedGuid = localStorage.getItem('terrilmx_guid');
-    if (savedGuid){
-      document.getElementById('guid-input').value = savedGuid;
-    }
+    db.ref('terrilmx_pilotes/' + steamId).once('value').then((snap) => {
+      const data = snap.val();
+      if (data && data.guid){
+        document.getElementById('guid-input').value = data.guid;
+        localStorage.setItem('terrilmx_guid', data.guid);
+      } else {
+        const savedGuid = localStorage.getItem('terrilmx_guid');
+        if (savedGuid){
+          document.getElementById('guid-input').value = savedGuid;
+        }
+      }
+    }).catch(() => {
+      const savedGuid = localStorage.getItem('terrilmx_guid');
+      if (savedGuid){
+        document.getElementById('guid-input').value = savedGuid;
+      }
+    });
   }
 
   // Nettoie l'URL une fois les paramètres lus, pour éviter de les garder au rechargement.
