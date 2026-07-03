@@ -461,7 +461,6 @@
   <div class="brand">TERRIL<span style="color:var(--rust);">MX</span></div>
   <div class="footlinks">
     <a id="discord-foot" href="#" target="_blank" rel="noopener">Discord</a>
-    <a id="pitlane-foot" href="#" target="_blank" rel="noopener">PITLANE</a>
     <a href="#connexion">Rejoindre</a>
     <a href="#" onclick="toggleAdmin(); return false;" style="opacity:.5;">Admin</a>
   </div>
@@ -532,10 +531,9 @@
    fichier pour un simple changement de contenu.
    ============================================================ */
 const CONFIG = {
-  intro: "Un serveur MX Bikes taillé dans les terrils du bassin minier. Grille de départ ouverte tous les soirs, pistes locales et classement en direct avec la communauté PITLANE.",
+  intro: "Un serveur MX Bikes taillé dans les terrils du bassin minier. Grille de départ ouverte tous les soirs, pistes locales et classement en direct entre pilotes.",
 
   discordUrl: "https://discord.gg/VOTRE-INVITATION",
-  pitlaneUrl: "https://VOTRE-USER.github.io/PITLANE/",
 
   connexion: {
     ip: "51.XX.XX.XX:XXXXX",
@@ -568,14 +566,14 @@ const CONFIG = {
     "Pas de triche, d'exploit de collision ou de raccourci hors-piste.",
     "Casque micro recommandé pendant les sessions organisées.",
     "Retard supérieur à 5 minutes en course officielle : départ non garanti.",
-    "Les classements PITLANE suivent les courses validées par un modérateur.",
+    "Les classements du serveur suivent les courses validées par un modérateur.",
     "Toute infraction répétée entraîne un avertissement puis une exclusion."
   ],
 
   mods: [
     { label: "Piste", titre: "Pack Terrils du Nord", desc: "Ensemble des pistes locales utilisées en rotation, à installer avant connexion." },
     { label: "Physique", titre: "Suspension realistic v3", desc: "Mod de physique partagé par tous les pilotes pour garantir des courses équitables." },
-    { label: "HUD", titre: "PITLANE Timing Overlay", desc: "Affichage des écarts et secteurs synchronisé avec le classement PITLANE." }
+    { label: "HUD", titre: "Timing Overlay TERRIL MX", desc: "Affichage des écarts et secteurs synchronisé avec le classement du serveur." }
   ],
 
   // Code d'accès au panneau admin — protection légère, changez-le, ne réutilisez
@@ -780,7 +778,6 @@ function render(){
   document.getElementById('lede-txt').textContent = CONFIG.intro;
   document.getElementById('discord-btn').href = CONFIG.discordUrl;
   document.getElementById('discord-foot').href = CONFIG.discordUrl;
-  document.getElementById('pitlane-foot').href = CONFIG.pitlaneUrl;
 
   document.getElementById('ip-val').textContent = CONFIG.connexion.ip;
   document.getElementById('pwd-val').textContent = CONFIG.connexion.motDePasse;
