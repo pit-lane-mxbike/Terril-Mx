@@ -1,0 +1,15 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\mxbikes]
+@="URL:MX Bikes"
+"URL Protocol"=""
+
+[HKEY_CLASSES_ROOT\mxbikes\DefaultIcon]
+@="C:\\Program Files (x86)\\Steam\\steamapps\\common\\MX Bikes\\mxbikes.ico"
+
+[HKEY_CLASSES_ROOT\mxbikes\shell]
+
+[HKEY_CLASSES_ROOT\mxbikes\shell\open]
+
+[HKEY_CLASSES_ROOT\mxbikes\shell\open\command]
+@="\"C:\\Program Files (x86)\\Steam\\steamapps\\common\\MX Bikes\\mxbikes.exe\" -connect \"%1\""
