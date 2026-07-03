@@ -392,6 +392,9 @@
         Il n'est jamais deviné automatiquement à partir de Steam : PiBoSo le génère
         côté jeu, d'où l'étape manuelle.
       </div>
+      <div style="margin-top:1.2rem;">
+        <a href="/api/logout" style="font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:.75rem; letter-spacing:.08em; color:var(--ash);">Se déconnecter</a>
+      </div>
     </div>
   </div>
 </section>
@@ -515,9 +518,8 @@ const db = firebase.database();
 
 function saveGuid(){
   const guid = document.getElementById('guid-input').value.trim();
-  const steamId = localStorage.getItem('terrilmx_steamid');
+  const steamId = window.terrilmxSteamId;
   if (!guid || !steamId) return;
-  localStorage.setItem('terrilmx_guid', guid);
   db.ref('terrilmx_pilotes/' + steamId).set({
     steamid: steamId,
     guid: guid,
@@ -534,41 +536,34 @@ function saveGuid(){
 function initProfile(){
   const params = new URLSearchParams(window.location.search);
   const steamError = params.get('steam_error');
-  const steamId = params.get('steamid') || localStorage.getItem('terrilmx_steamid');
-
   if (steamError){
     document.getElementById('steam-error').style.display = 'block';
   }
-
-  if (steamId){
-    localStorage.setItem('terrilmx_steamid', steamId);
-    document.getElementById('profile-disconnected').style.display = 'none';
-    document.getElementById('profile-connected').style.display = 'block';
-    document.getElementById('steamid-val').textContent = steamId;
-
-    db.ref('terrilmx_pilotes/' + steamId).once('value').then((snap) => {
-      const data = snap.val();
-      if (data && data.guid){
-        document.getElementById('guid-input').value = data.guid;
-        localStorage.setItem('terrilmx_guid', data.guid);
-      } else {
-        const savedGuid = localStorage.getItem('terrilmx_guid');
-        if (savedGuid){
-          document.getElementById('guid-input').value = savedGuid;
-        }
-      }
-    }).catch(() => {
-      const savedGuid = localStorage.getItem('terrilmx_guid');
-      if (savedGuid){
-        document.getElementById('guid-input').value = savedGuid;
-      }
-    });
-  }
-
-  // Nettoie l'URL une fois les paramètres lus, pour éviter de les garder au rechargement.
-  if (params.has('steamid') || params.has('steam_error')){
+  if (params.has('steam_error')){
     window.history.replaceState({}, '', window.location.pathname);
   }
+
+  // La session est désormais vérifiée côté serveur via un cookie signé,
+  // exactement comme sur les sites type MXB Ranked : pas de confiance
+  // faite au navigateur, /api/session revérifie la signature à chaque visite.
+  fetch('/api/session')
+    .then(r => r.json())
+    .then(data => {
+      if (!data.steamId) return;
+      const steamId = data.steamId;
+      window.terrilmxSteamId = steamId;
+      document.getElementById('profile-disconnected').style.display = 'none';
+      document.getElementById('profile-connected').style.display = 'block';
+      document.getElementById('steamid-val').textContent = steamId;
+
+      db.ref('terrilmx_pilotes/' + steamId).once('value').then((snap) => {
+        const data2 = snap.val();
+        if (data2 && data2.guid){
+          document.getElementById('guid-input').value = data2.guid;
+        }
+      });
+    })
+    .catch(() => {});
 }
 
 function render(){
