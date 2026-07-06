@@ -276,7 +276,6 @@
   <div class="brand">TERRIL<span>MX</span></div>
   <div class="navlinks">
     <a href="#connexion">Connexion</a>
-    <a href="#lien-direct">Rejoindre en 1 clic</a>
     <a href="#profil">Profil pilote</a>
     <a href="#historique">Historique</a>
     <a href="#pistes">Pistes</a>
@@ -310,7 +309,7 @@
       <div class="board-label">Rejoindre en direct</div>
       <a id="join-link" class="btn btn-primary" href="#" style="display:inline-flex; margin:0.6rem 0 1.2rem; text-decoration:none;">Rejoindre en un clic</a>
       <p style="color:var(--ash); font-size:.76rem; line-height:1.5; margin:-0.6rem 0 1.2rem;">
-        Fonctionne si vous avez déjà installé le lien mxbikes:// (voir plus bas). Sinon, connectez-vous manuellement avec les infos ci-dessous.
+        Lance directement le jeu via Steam. La première fois, votre navigateur peut demander confirmation avant d'ouvrir Steam.
       </p>
       <div class="connect-row">
         <span class="board-label" style="margin:0;">Adresse IP</span>
@@ -435,27 +434,6 @@
   </div>
 </section>
 
-<section id="lien-direct">
-  <div class="section-head">
-    <div class="eyebrow">Une seule fois</div>
-    <h2>Activer le bouton "Rejoindre en un clic"</h2>
-  </div>
-  <div class="profile-box" style="max-width:640px;">
-    <p style="color:var(--ash); font-size:.88rem; line-height:1.6; margin-bottom:1.2rem;">
-      Windows ne sait pas nativement ce qu'est un lien <span class="mono">mxbikes://</span> —
-      contrairement à Steam, il faut l'enregistrer une fois. Ça se fait avec un petit fichier
-      <span class="mono">.reg</span> officiel (protocole documenté par PiBoSo, le développeur du jeu).
-    </p>
-    <ol style="color:var(--chalk); font-size:.86rem; line-height:2; padding-left:1.2rem;">
-      <li>Téléchargez <a href="mxbikes-protocol.reg" download style="color:var(--gold);">mxbikes-protocol.reg</a></li>
-      <li>Ouvrez-le avec le Bloc-notes (clic droit → "Modifier")</li>
-      <li>Remplacez les deux chemins par l'emplacement réel de votre <span class="mono">mxbikes.exe</span> (clic droit sur le jeu dans Steam → Gérer → Parcourir les fichiers locaux)</li>
-      <li>Enregistrez, puis double-cliquez sur le fichier <span class="mono">.reg</span> et acceptez l'ajout au registre</li>
-    </ol>
-    <div class="profile-note">À faire une seule fois par PC. Après ça, tous les boutons "Rejoindre en un clic" du site (et d'autres sites MX Bikes) fonctionneront directement.</div>
-  </div>
-</section>
-
 <section id="pistes">
   <div class="section-head">
     <div class="eyebrow">Rotation</div>
@@ -564,9 +542,7 @@ const CONFIG = {
   connexion: {
     ip: "51.XX.XX.XX:XXXXX",
     motDePasse: "terrilmx",
-    aUnMotDePasse: true,
-    slots: "18",
-    nomServeur: "TERRIL MX"
+    slots: "18"
   },
 
   // Statut affiché — sera remplacé plus tard par de vraies données Firebase
@@ -811,11 +787,12 @@ function render(){
   document.getElementById('pwd-val').textContent = CONFIG.connexion.motDePasse;
   document.getElementById('slots-val').textContent = CONFIG.connexion.slots;
 
-  // Format officiel confirmé par PiBoSo (développeur MX Bikes) :
-  // mxbikes://ip:port/local_ip:local_port/nom_serveur/mot_de_passe(0|1)/piste/layout/categories
+  // Steam est déjà enregistré comme protocole par l'installation de Steam
+  // elle-même : aucune manipulation n'est nécessaire côté joueur.
+  // AppID MX Bikes sur Steam : 655500.
+  const MXB_STEAM_APPID = '655500';
   const ip = CONFIG.connexion.ip;
-  const pwdFlag = CONFIG.connexion.aUnMotDePasse ? '1' : '0';
-  const joinUrl = 'mxbikes://' + [ip, ip, encodeURIComponent(CONFIG.connexion.nomServeur), pwdFlag, '', '', ''].join('/');
+  const joinUrl = `steam://run/${MXB_STEAM_APPID}//-directconnect%20${encodeURIComponent(ip)}/`;
   document.getElementById('join-link').href = joinUrl;
 
   document.getElementById('status-text').textContent = CONFIG.statut.enLigne ? "Serveur en ligne" : "Serveur hors ligne";
