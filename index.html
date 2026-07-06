@@ -192,6 +192,30 @@
   .stat-cap{font-size:.72rem; color:var(--ash); text-transform:uppercase; letter-spacing:.1em; font-family:'Oswald',sans-serif; margin-top:.2rem;}
   .board-note{margin-top:1.6rem; font-size:.78rem; color:var(--ash); line-height:1.6; border-top:1px dashed var(--line); padding-top:1rem;}
 
+  /* ---------- LISTE DE SERVEURS ---------- */
+  .server-list{display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line);}
+  .server-card{
+    background:var(--coal); padding:1.6rem 2rem;
+    display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:1.6rem;
+  }
+  @media (max-width:760px){ .server-card{grid-template-columns:1fr; text-align:left;} }
+  .server-card-id{min-width:120px;}
+  .server-region{
+    font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:.68rem;
+    letter-spacing:.12em; color:var(--gold); display:block; margin-bottom:.3rem;
+  }
+  .server-name{font-family:'Archivo Black',sans-serif; font-size:1.1rem; text-transform:uppercase;}
+  .server-card-mid{display:flex; flex-wrap:wrap; gap:1.8rem; align-items:center;}
+  .server-status{display:flex; align-items:center; gap:.5rem;}
+  .server-status .dot{width:8px; height:8px; border-radius:50%; background:var(--moss-bright); box-shadow:0 0 6px var(--moss-bright); flex-shrink:0;}
+  .server-status.off .dot{background:var(--ash); box-shadow:none;}
+  @media (prefers-reduced-motion: no-preference){ .server-status:not(.off) .dot{animation:pulse 1.8s ease-in-out infinite;} }
+  .server-status-text{font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:.75rem; letter-spacing:.08em; color:var(--moss-bright);}
+  .server-status.off .server-status-text{color:var(--ash);}
+  .server-stat{font-size:.82rem; color:var(--ash);}
+  .server-stat b{color:var(--chalk); font-family:'JetBrains Mono',monospace; font-weight:500;}
+  .server-card-actions{display:flex; gap:.7rem; align-items:center; flex-wrap:wrap;}
+
   /* ---------- ROTATION PISTES ---------- */
   .rotation{list-style:none; display:flex; flex-direction:column;}
   .rotation li{
@@ -302,58 +326,9 @@
 <section id="connexion">
   <div class="section-head">
     <div class="eyebrow">Infos serveur</div>
-    <h2>Connexion &amp; statut</h2>
+    <h2>Rejoindre un serveur</h2>
   </div>
-  <div class="pitboard">
-    <div class="board-cell">
-      <div class="board-label">Rejoindre en direct</div>
-      <a id="join-link" class="btn btn-primary" href="#" style="display:inline-flex; margin:0.6rem 0 1.2rem; text-decoration:none;">Rejoindre en un clic</a>
-      <p style="color:var(--ash); font-size:.76rem; line-height:1.5; margin:-0.6rem 0 1.2rem;">
-        Lance directement le jeu via Steam. La première fois, votre navigateur peut demander confirmation avant d'ouvrir Steam.
-      </p>
-      <div class="connect-row">
-        <span class="board-label" style="margin:0;">Adresse IP</span>
-        <span class="connect-val" id="ip-val"></span>
-        <button class="copy-btn" onclick="copyVal('ip-val')">Copier</button>
-      </div>
-      <div class="connect-row">
-        <span class="board-label" style="margin:0;">Mot de passe</span>
-        <span class="connect-val" id="pwd-val"></span>
-        <button class="copy-btn" onclick="copyVal('pwd-val')">Copier</button>
-      </div>
-      <div class="connect-row">
-        <span class="board-label" style="margin:0;">Slots</span>
-        <span class="connect-val" id="slots-val"></span>
-        <span></span>
-      </div>
-      <div class="board-note">Serveur dédié MX Bikes. Connexion via le menu multijoueur en ligne, onglet "Favoris" une fois l'IP ajoutée.</div>
-    </div>
-    <div class="board-cell">
-      <div class="status-top">
-        <span class="dot"></span>
-        <span class="status-name" id="status-text"></span>
-      </div>
-      <div class="stat-grid">
-        <div>
-          <div class="stat-num" id="players-num"></div>
-          <div class="stat-cap">Pilotes connectés</div>
-        </div>
-        <div>
-          <div class="stat-num" id="ping-num"></div>
-          <div class="stat-cap">Ping moyen</div>
-        </div>
-        <div>
-          <div class="stat-num" id="track-num"></div>
-          <div class="stat-cap">Piste active</div>
-        </div>
-        <div>
-          <div class="stat-num" id="session-num"></div>
-          <div class="stat-cap">Session en cours</div>
-        </div>
-      </div>
-      <div class="board-note" id="statut-note">Statut mis à jour manuellement par l'équipe TERRIL MX.</div>
-    </div>
-  </div>
+  <div id="serveurs-list" class="server-list"></div>
 </section>
 
 <section id="profil">
@@ -483,17 +458,17 @@
     <div class="board-cell">
       <div class="board-label">Mettre à jour le statut serveur</div>
       <div style="display:flex; flex-direction:column; gap:.7rem; margin-top:.8rem;">
+        <label style="font-size:.78rem; color:var(--ash);">Serveur
+          <select id="admin-serveur" class="guid-input" style="margin-top:.3rem;"></select>
+        </label>
         <label style="font-size:.78rem; color:var(--ash);">En ligne ?
           <select id="admin-enligne" class="guid-input" style="margin-top:.3rem;">
             <option value="true">Oui</option>
             <option value="false">Non</option>
           </select>
         </label>
-        <label style="font-size:.78rem; color:var(--ash);">Joueurs (ex: 7/18)
+        <label style="font-size:.78rem; color:var(--ash);">Joueurs (ex: 7)
           <input id="admin-joueurs" class="guid-input" style="margin-top:.3rem;">
-        </label>
-        <label style="font-size:.78rem; color:var(--ash);">Ping moyen (ex: 34ms)
-          <input id="admin-ping" class="guid-input" style="margin-top:.3rem;">
         </label>
         <label style="font-size:.78rem; color:var(--ash);">Piste active
           <input id="admin-piste" class="guid-input" style="margin-top:.3rem;">
@@ -539,19 +514,35 @@ const CONFIG = {
 
   discordUrl: "https://discord.gg/VOTRE-INVITATION",
 
-  connexion: {
-    ip: "51.XX.XX.XX:XXXXX",
-    motDePasse: "terrilmx",
-    slots: "18"
-  },
+  // Ajoutez ou retirez un serveur simplement en ajoutant/retirant un bloc ici.
+  // "id" doit être unique : c'est lui qui relie le serveur à son statut Firebase
+  // (terrilmx_statut/{id}) et au panneau admin.
+  serveurs: [
+    {
+      id: "principal",
+      region: "Pas-de-Calais",
+      nom: "TERRIL MX #1",
+      ip: "51.XX.XX.XX:XXXXX",
+      motDePasse: "terrilmx",
+      slots: "18"
+    },
+    {
+      id: "secondaire",
+      region: "Pas-de-Calais",
+      nom: "TERRIL MX #2 — Enduro",
+      ip: "51.XX.XX.XX:YYYYY",
+      motDePasse: "terrilmx",
+      slots: "12"
+    }
+  ],
 
-  // Statut affiché — sera remplacé plus tard par de vraies données Firebase
-  statut: {
-    enLigne: true,
-    joueurs: "7/18",
-    ping: "34ms",
-    piste: "Gate 2",
-    session: "Course"
+  // Statuts par défaut affichés tant qu'aucune donnée live n'existe encore
+  // dans Firebase pour ce serveur (clé = id du serveur ci-dessus).
+  statutParDefaut: {
+    enLigne: false,
+    joueurs: "0",
+    piste: "—",
+    session: "—"
   },
 
   // Ajoutez / retirez des lignes librement, la numérotation s'adapte toute seule
@@ -590,6 +581,10 @@ const CONFIG = {
 function copyVal(id){
   const el = document.getElementById(id);
   const text = el.textContent.trim();
+  navigator.clipboard?.writeText(text);
+}
+
+function copyText(text){
   navigator.clipboard?.writeText(text);
 }
 
@@ -705,17 +700,22 @@ function loadHistorique(guid){
   });
 }
 
-/* ---------- Statut serveur en direct (Firebase) ---------- */
+/* ---------- Statut serveur en direct (Firebase), par serveur ---------- */
 function initStatutLive(){
   db.ref('terrilmx_statut').on('value', (snap) => {
-    const s = snap.val();
-    if (!s) return; // pas encore de donnée live, on garde les valeurs par défaut de CONFIG
-    document.getElementById('status-text').textContent = s.enLigne ? "Serveur en ligne" : "Serveur hors ligne";
-    document.getElementById('players-num').textContent = s.joueurs || '—';
-    document.getElementById('ping-num').textContent = s.ping || '—';
-    document.getElementById('track-num').textContent = s.piste || '—';
-    document.getElementById('session-num').textContent = s.session || '—';
-    document.getElementById('statut-note').textContent = 'Statut mis à jour par l\'équipe TERRIL MX.';
+    const tous = snap.val() || {};
+    CONFIG.serveurs.forEach((serveur) => {
+      const s = tous[serveur.id];
+      if (!s) return; // pas encore de donnée live pour ce serveur, on garde le statut par défaut
+      const statusEl = document.getElementById('status-' + serveur.id);
+      const dotWrap = document.getElementById('statuswrap-' + serveur.id);
+      const joueursEl = document.getElementById('joueurs-' + serveur.id);
+      const pisteEl = document.getElementById('piste-' + serveur.id);
+      if (statusEl) statusEl.textContent = s.enLigne ? 'En ligne' : 'Hors ligne';
+      if (dotWrap) dotWrap.classList.toggle('off', !s.enLigne);
+      if (joueursEl) joueursEl.textContent = (s.joueurs || '0') + ' / ' + serveur.slots;
+      if (pisteEl) pisteEl.textContent = s.piste || '—';
+    });
   });
 }
 
@@ -728,6 +728,8 @@ function toggleAdmin(){
   }
   const code = prompt('Code admin :');
   if (code === CONFIG.adminCode){
+    const select = document.getElementById('admin-serveur');
+    select.innerHTML = CONFIG.serveurs.map(s => `<option value="${s.id}">${s.nom}</option>`).join('');
     panel.style.display = 'block';
     panel.scrollIntoView({ behavior: 'smooth' });
   } else if (code !== null){
@@ -736,15 +738,15 @@ function toggleAdmin(){
 }
 
 function adminUpdateStatut(){
+  const serveurId = document.getElementById('admin-serveur').value;
   const statut = {
     enLigne: document.getElementById('admin-enligne').value === 'true',
     joueurs: document.getElementById('admin-joueurs').value.trim(),
-    ping: document.getElementById('admin-ping').value.trim(),
     piste: document.getElementById('admin-piste').value.trim(),
     session: document.getElementById('admin-session').value.trim(),
     updatedAt: Date.now()
   };
-  db.ref('terrilmx_statut').set(statut).then(() => {
+  db.ref('terrilmx_statut/' + serveurId).set(statut).then(() => {
     const saved = document.getElementById('admin-statut-saved');
     saved.style.display = 'inline';
     setTimeout(() => saved.style.display = 'none', 2500);
@@ -783,23 +785,38 @@ function render(){
   document.getElementById('discord-btn').href = CONFIG.discordUrl;
   document.getElementById('discord-foot').href = CONFIG.discordUrl;
 
-  document.getElementById('ip-val').textContent = CONFIG.connexion.ip;
-  document.getElementById('pwd-val').textContent = CONFIG.connexion.motDePasse;
-  document.getElementById('slots-val').textContent = CONFIG.connexion.slots;
-
   // Steam est déjà enregistré comme protocole par l'installation de Steam
   // elle-même : aucune manipulation n'est nécessaire côté joueur.
   // AppID MX Bikes sur Steam : 655500.
   const MXB_STEAM_APPID = '655500';
-  const ip = CONFIG.connexion.ip;
-  const joinUrl = `steam://run/${MXB_STEAM_APPID}//-directconnect%20${encodeURIComponent(ip)}/`;
-  document.getElementById('join-link').href = joinUrl;
 
-  document.getElementById('status-text').textContent = CONFIG.statut.enLigne ? "Serveur en ligne" : "Serveur hors ligne";
-  document.getElementById('players-num').textContent = CONFIG.statut.joueurs;
-  document.getElementById('ping-num').textContent = CONFIG.statut.ping;
-  document.getElementById('track-num').textContent = CONFIG.statut.piste;
-  document.getElementById('session-num').textContent = CONFIG.statut.session;
+  document.getElementById('serveurs-list').innerHTML = CONFIG.serveurs.map((s) => {
+    const joinUrl = `steam://run/${MXB_STEAM_APPID}//-directconnect%20${encodeURIComponent(s.ip)}/`;
+    const d = CONFIG.statutParDefaut;
+    return `
+      <div class="server-card">
+        <div class="server-card-id">
+          <span class="server-region">${s.region}</span>
+          <span class="server-name">${s.nom}</span>
+        </div>
+        <div class="server-card-mid">
+          <div class="server-status ${d.enLigne ? '' : 'off'}" id="statuswrap-${s.id}">
+            <span class="dot"></span>
+            <span class="server-status-text" id="status-${s.id}">${d.enLigne ? 'En ligne' : 'Hors ligne'}</span>
+          </div>
+          <div class="server-stat">Joueurs : <b id="joueurs-${s.id}">${d.joueurs} / ${s.slots}</b></div>
+          <div class="server-stat">Piste : <b id="piste-${s.id}">${d.piste}</b></div>
+          <div class="server-stat">IP : <b>${s.ip}</b></div>
+          <div class="server-stat">Mot de passe : <b>${s.motDePasse || '—'}</b></div>
+        </div>
+        <div class="server-card-actions">
+          <a class="btn btn-primary" href="${joinUrl}" style="text-decoration:none;">Rejoindre</a>
+          <button class="copy-btn" onclick="copyText('${s.ip}')">Copier IP</button>
+          <button class="copy-btn" onclick="copyText('${s.motDePasse || ''}')">Copier mdp</button>
+        </div>
+      </div>
+    `;
+  }).join('');
 
   const rotationEl = document.getElementById('rotation-list');
   rotationEl.innerHTML = CONFIG.rotation.map((p, i) => `
